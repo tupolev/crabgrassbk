@@ -1,0 +1,7 @@
+selenium
+yaml
+pip (9.0.1)
+pkg-resources (0.0.0)
+setuptools (33.1.1)
+six (1.10.0)
+wheel (0.30.0a0)
