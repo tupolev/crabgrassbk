@@ -1,7 +1,8 @@
-selenium
-yaml
-pip (9.0.1)
-pkg-resources (0.0.0)
-setuptools (33.1.1)
-six (1.10.0)
-wheel (0.30.0a0)
+selenium-3.4
+PyYAML-3.11
+pip-9.0.1
+pkg-resources-0.0.0
+setuptools-33.1.1
+six-1.10.0
+wheel-0.30.0a0
+python-slugify-1.2.4

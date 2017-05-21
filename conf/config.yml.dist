@@ -1,0 +1,11 @@
+config:
+    crabgrass:
+        username: crabgrass
+        password: changeme
+        group: mygroup
+        url: https://we.riseup.net
+        uri:
+          me: /me
+          pages: /groups/mygroup/pages#
+    directories:
+        backup: ./backup
