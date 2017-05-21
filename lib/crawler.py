@@ -1,9 +1,8 @@
 import os
+import re
 import time
-import urllib
 import requests
 from typing import Dict
-from urllib.error import HTTPError
 from slugify import slugify
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -36,13 +35,13 @@ class Crawler:
 
         return self.driver
 
-    def gotoPages(self):
+    def goto_pages(self):
         self.driver.get(self.config.url + self.config.uri_pages)
         self.driver.wait.until(EC.presence_of_all_elements_located)
 
         return self.driver
 
-    def getAllCreatedPagesLinks(self):
+    def get_all_created_pages_links(self):
         total_link_list = []
         next_link_container = self.driver.find_element_by_xpath('//*[@id="search_results"]/section/ul/li[last()]')
         classes = next_link_container.get_attribute("class")
@@ -64,15 +63,17 @@ class Crawler:
 
         return total_link_list
 
-    def crawlLink(self, link: str, output_dir: str):
+    def crawl_link(self, link: str, output_dir: str):
         self.driver.get(link)
         self.driver.wait.until(EC.presence_of_all_elements_located)
         self.dump_page(output_dir)
 
     def dump_page(self, output_dir: str):
-        page_title = self.driver.find_element_by_xpath('/html/head/title')
-        safe_folder_name = slugify(page_title.text)
-        safe_file_name = slugify(page_title.text) + '.html'
+        title_start = re.search(r"<title>", self.driver.page_source[1:1500])
+        title_end = re.search(r"</title>", self.driver.page_source[1:1500])
+        page_title = self.driver.page_source[(title_start.start(0)+8):title_end.start(0)-1].strip()
+        safe_folder_name = slugify(page_title)
+        safe_file_name = slugify(page_title) + '.html'
         #create folder for page if not exists
         current_page_path = output_dir + os.sep + safe_folder_name
         if not os.path.exists(current_page_path):
@@ -82,10 +83,10 @@ class Crawler:
         page_source = self.dump_page_attachments(current_page_path + os.sep + 'files', page_source)
         with open(current_page_path + os.sep + safe_file_name, 'w') as f:
             f.write(page_source)
-        print('Dumping page ', page_title.text)
+        print('Dumping page ', page_title)
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
-        pass
+        return page_source
 
     def dump_page_images(self, output_dir: str, page_source: str) -> str:
         print('--Dumping images')
