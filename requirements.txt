@@ -6,3 +6,4 @@ setuptools-33.1.1
 six-1.10.0
 wheel-0.30.0a0
 python-slugify-1.2.4
+requests-2.14.2
