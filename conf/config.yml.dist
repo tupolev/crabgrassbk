@@ -1,4 +1,6 @@
 config:
+    phantomjs:
+        path: bin/phantomjs
     crabgrass:
         username: crabgrass
         password: changeme
