@@ -1,11 +1,10 @@
 import os
 import re
 import time
-from urllib.error import URLError
-
 import requests
 import pathlib
 from typing import Dict
+from urllib.error import URLError
 from slugify import slugify
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
