@@ -2,12 +2,12 @@ import os
 import re
 import time
 import requests
+import pathlib
 from typing import Dict
 from slugify import slugify
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from lib.config import Config
-
 
 class Crawler:
     def __init__(self, driver, config: Config):
@@ -79,15 +79,46 @@ class Crawler:
         if not os.path.exists(current_page_path):
             os.makedirs(current_page_path)
         #save page source
-        page_source = self.dump_page_images(current_page_path + os.sep + 'images', self.driver.page_source)
-        page_source = self.dump_page_attachments(current_page_path + os.sep + 'files', page_source)
+        page_source = \
+            self.dump_page_images(current_page_path + os.sep + self.config.subdir_images, self.driver.page_source)
+        page_source = \
+            self.dump_page_attachments(current_page_path + os.sep + self.config.subdir_attachments, page_source)
         page_source_recoded = page_source.encode('utf-8', 'strict')
         with open(current_page_path + os.sep + safe_file_name, 'w') as f:
             f.write(str(page_source_recoded))
         print('Dumping page ', page_title.encode('utf-8', 'strict'))
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
-        return page_source
+        print('--Dumping attachments')
+        attachments_folder = self.config.subdir_attachments
+        processed_page_source = page_source
+        try:
+            # create img subfolder for attachments
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            # find a tags in source
+            a_nodes = self.driver.find_elements_by_xpath("//a")
+            # download and store attachments in folder attachments
+            for a_node in a_nodes:
+                href = str(a_node.get_attribute('href'))
+                attachment_file_name = os.path.basename(href)
+                if self.is_downloadable_resource(href) \
+                        and not os.path.exists(output_dir + os.sep + attachment_file_name):
+                    print('Dumping attachment ', attachment_file_name)
+                    response = requests.get(href, cookies=self.cookies)
+                    output = open(output_dir + os.sep + attachment_file_name, "wb")
+                    output.write(response.content)
+                    output.close()
+
+                # replace attachment link paths with stored path within page source
+                href = href.replace(self.config.url, '')
+                print(href, ' -> ', attachments_folder + os.sep + attachment_file_name)
+                processed_page_source =\
+                    processed_page_source.replace(href, attachments_folder + os.sep + attachment_file_name)
+        except Exception as e:
+            print(str(e))
+
+        return processed_page_source
 
     def dump_page_images(self, output_dir: str, page_source: str) -> str:
         print('--Dumping images')
@@ -110,6 +141,8 @@ class Crawler:
                     output.close()
 
                 # replace image paths with stored path within page source
+                src = src.replace(self.config.url, '')
+                print(src, ' -> ', 'images' + os.sep + image_file_name)
                 processed_page_source = processed_page_source.replace(src, 'images' + os.sep + image_file_name)
         except Exception as e:
             print(str(e))
@@ -122,3 +155,8 @@ class Crawler:
             cookies[s_cookie["name"]] = s_cookie["value"]
 
         return cookies
+
+    def is_downloadable_resource(self, resource_path: str) -> bool:
+        ext = pathlib.Path(resource_path).suffix.replace('.', '')
+
+        return ext not in self.config.not_downloadable_extensions

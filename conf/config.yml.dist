@@ -11,3 +11,6 @@ config:
           pages: /groups/mygroup/pages#
     directories:
         backup: ./backup
+        attachments_sub_dir: attachments
+        images_sub_dir: images
+    not_downloadable_extensions: { '', htm, html, shtml, php, asp, js, jsp, jpg, jpeg, png, gif }
