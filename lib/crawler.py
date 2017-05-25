@@ -1,6 +1,8 @@
 import os
 import re
 import time
+from urllib.error import URLError
+
 import requests
 import pathlib
 from typing import Dict
@@ -64,9 +66,12 @@ class Crawler:
         return total_link_list
 
     def crawl_link(self, link: str, output_dir: str):
-        self.driver.get(link)
-        self.driver.wait.until(EC.presence_of_all_elements_located)
-        self.dump_page(output_dir)
+        try:
+            self.driver.get(link)
+            self.driver.wait.until(EC.presence_of_all_elements_located)
+            self.dump_page(output_dir)
+        except URLError as ex:
+            print(ex.reason)
 
     def dump_page(self, output_dir: str):
         title_start = re.search(r"<title>", self.driver.page_source[1:1500])
