@@ -110,11 +110,11 @@ class Crawler:
                     output.write(response.content)
                     output.close()
 
-                # replace attachment link paths with stored path within page source
-                href = href.replace(self.config.url, '')
-                print(href, ' -> ', attachments_folder + os.sep + attachment_file_name)
-                processed_page_source =\
-                    processed_page_source.replace(href, attachments_folder + os.sep + attachment_file_name)
+                    # replace attachment link paths with stored path within page source
+                    href = href.replace(self.config.url, '')
+                    print(href, ' -> ', attachments_folder + os.sep + attachment_file_name)
+                    processed_page_source =\
+                        processed_page_source.replace(href, attachments_folder + os.sep + attachment_file_name)
         except Exception as e:
             print(str(e))
 
@@ -140,10 +140,10 @@ class Crawler:
                     output.write(response.content)
                     output.close()
 
-                # replace image paths with stored path within page source
-                src = src.replace(self.config.url, '')
-                print(src, ' -> ', 'images' + os.sep + image_file_name)
-                processed_page_source = processed_page_source.replace(src, 'images' + os.sep + image_file_name)
+                    # replace image paths with stored path within page source
+                    src = src.replace(self.config.url, '')
+                    print(src, ' -> ', 'images' + os.sep + image_file_name)
+                    processed_page_source = processed_page_source.replace(src, 'images' + os.sep + image_file_name)
         except Exception as e:
             print(str(e))
 
