@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from lib.config import Config
 
+
 class Crawler:
     def __init__(self, driver, config: Config):
         self.driver = driver
