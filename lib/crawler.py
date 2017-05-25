@@ -81,9 +81,10 @@ class Crawler:
         #save page source
         page_source = self.dump_page_images(current_page_path + os.sep + 'images', self.driver.page_source)
         page_source = self.dump_page_attachments(current_page_path + os.sep + 'files', page_source)
+        page_source_recoded = page_source.encode('utf-8', 'strict')
         with open(current_page_path + os.sep + safe_file_name, 'w') as f:
-            f.write(page_source)
-        print('Dumping page ', page_title)
+            f.write(str(page_source_recoded))
+        print('Dumping page ', page_title.encode('utf-8', 'strict'))
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
         return page_source
