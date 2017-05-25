@@ -102,11 +102,12 @@ class Crawler:
             for image in image_nodes:
                 src = str(image.get_attribute('src'))
                 image_file_name = os.path.basename(src)
-                print('Dumping image ', image_file_name)
-                response = requests.get(src, cookies=self.cookies)
-                output = open(output_dir + os.sep + image_file_name, "wb")
-                output.write(response.content)
-                output.close()
+                if not os.path.exists(output_dir + os.sep + image_file_name):
+                    print('Dumping image ', image_file_name)
+                    response = requests.get(src, cookies=self.cookies)
+                    output = open(output_dir + os.sep + image_file_name, "wb")
+                    output.write(response.content)
+                    output.close()
 
                 # replace image paths with stored path within page source
                 processed_page_source = processed_page_source.replace(src, 'images' + os.sep + image_file_name)

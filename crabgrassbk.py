@@ -23,7 +23,8 @@ if __name__ == "__main__":
     crawler.goto_pages()
     time.sleep(2)
     # create folder for backups if it doesnt exist
-    backup_dir_for_now = config.dir_backup + os.path.sep + str(int(time.time()))
+    current_datetime = time.strftime('%d%m%Y%H%M%S')
+    backup_dir_for_now = config.dir_backup + os.path.sep + current_datetime
     if not os.path.exists(config.dir_backup):
         os.makedirs(config.dir_backup)
     if not os.path.exists(backup_dir_for_now):
