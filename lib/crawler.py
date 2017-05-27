@@ -71,7 +71,7 @@ class Crawler:
             self.driver.wait.until(EC.presence_of_all_elements_located)
             self.dump_page(output_dir)
         except Exception as ex:
-            print(link, str(ex))
+            print("SKIPPED :", link, " because of ", str(ex))
 
     def dump_page(self, output_dir: str):
         title_start = re.search(r"<title>", self.driver.page_source[1:1500])
