@@ -15,6 +15,6 @@ class Config:
         self.dir_backup = init_config['config']['directories']['backup']
         self.subdir_images = init_config['config']['directories']['images_sub_dir']
         self.subdir_attachments = init_config['config']['directories']['attachments_sub_dir']
-        self.not_downloadable_extensions = init_config['config']['not_downloadable_extensions']
+        self.downloadable_extensions = init_config['config']['downloadable_extensions']
         self.download_images = init_config['config']['download_images']
         self.download_attachments = init_config['config']['download_attachments']

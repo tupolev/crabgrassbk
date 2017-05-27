@@ -66,12 +66,9 @@ class Crawler:
         return total_link_list
 
     def crawl_link(self, link: str, output_dir: str):
-        try:
-            self.driver.get(link)
-            self.driver.wait.until(EC.presence_of_all_elements_located)
-            self.dump_page(output_dir)
-        except Exception as ex:
-            print("SKIPPED :", link, " because of ", str(ex))
+        self.driver.get(link)
+        self.driver.wait.until(EC.presence_of_all_elements_located)
+        self.dump_page(output_dir)
 
     def dump_page(self, output_dir: str):
         title_start = re.search(r"<title>", self.driver.page_source[1:1500])
@@ -100,19 +97,19 @@ class Crawler:
         print('--Dumping attachments')
         attachments_folder = self.config.subdir_attachments
         processed_page_source = page_source
-        try:
-            # create img subfolder for attachments
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir)
-            # find a tags in source
-            a_nodes = self.driver.find_elements_by_xpath("//a")
-            # download and store attachments in folder attachments
-            for a_node in a_nodes:
-                href = str(a_node.get_attribute('href'))
-                attachment_file_name = os.path.basename(href)
-                if self.is_downloadable_resource(href) \
-                        and not os.path.exists(output_dir + os.sep + attachment_file_name):
-                    print('Dumping attachment ', attachment_file_name)
+        # create img subfolder for attachments
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        # find a tags in source
+        a_nodes = self.driver.find_elements_by_xpath("//a")
+        # download and store attachments in folder attachments
+        for a_node in a_nodes:
+            href = str(a_node.get_attribute('href'))
+            attachment_file_name = os.path.basename(href)
+            if self.is_downloadable_resource(href) \
+                    and not os.path.exists(output_dir + os.sep + attachment_file_name):
+                print('Dumping attachment ', attachment_file_name)
+                try:
                     response = requests.get(href, cookies=self.cookies)
                     output = open(output_dir + os.sep + attachment_file_name, "wb")
                     output.write(response.content)
@@ -123,25 +120,25 @@ class Crawler:
                     print(href, ' -> ', attachments_folder + os.sep + attachment_file_name)
                     processed_page_source =\
                         processed_page_source.replace(href, attachments_folder + os.sep + attachment_file_name)
-        except Exception as e:
-            print(str(e))
+                except Exception as ex:
+                    print("SKIPPED :", href, " because of ", str(ex))
 
         return processed_page_source
 
     def dump_page_images(self, output_dir: str, page_source: str) -> str:
         print('--Dumping images')
         processed_page_source = page_source
-        try:
-            # create img subfolder for images
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir)
-            # find images in source
-            image_nodes = self.driver.find_elements_by_xpath("//img")
-            # download and store images in folder img
-            for image in image_nodes:
-                src = str(image.get_attribute('src'))
-                image_file_name = os.path.basename(src)
-                if not os.path.exists(output_dir + os.sep + image_file_name):
+        # create img subfolder for images
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        # find images in source
+        image_nodes = self.driver.find_elements_by_xpath("//img")
+        # download and store images in folder img
+        for image in image_nodes:
+            src = str(image.get_attribute('src'))
+            image_file_name = os.path.basename(src)
+            if not os.path.exists(output_dir + os.sep + image_file_name):
+                try:
                     print('Dumping image ', image_file_name)
                     response = requests.get(src, cookies=self.cookies)
                     output = open(output_dir + os.sep + image_file_name, "wb")
@@ -152,19 +149,22 @@ class Crawler:
                     src = src.replace(self.config.url, '')
                     print(src, ' -> ', 'images' + os.sep + image_file_name)
                     processed_page_source = processed_page_source.replace(src, 'images' + os.sep + image_file_name)
-        except Exception as e:
-            print(str(e))
+                except Exception as ex:
+                    print("SKIPPED :", src, " because of ", str(ex))
 
         return processed_page_source
 
     def get_cookies(self) -> Dict:
         cookies = {}
-        for s_cookie in self.driver.get_cookies():
-            cookies[s_cookie["name"]] = s_cookie["value"]
+        try:
+            for s_cookie in self.driver.get_cookies():
+                cookies[s_cookie["name"]] = s_cookie["value"]
+        except Exception as ex:
+            print("Exception while retrieving cookies. ", str(ex))
 
         return cookies
 
     def is_downloadable_resource(self, resource_path: str) -> bool:
         ext = pathlib.Path(resource_path).suffix.replace('.', '')
 
-        return ext not in self.config.not_downloadable_extensions
+        return ext in self.config.downloadable_extensions
