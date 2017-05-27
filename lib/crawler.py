@@ -70,8 +70,8 @@ class Crawler:
             self.driver.get(link)
             self.driver.wait.until(EC.presence_of_all_elements_located)
             self.dump_page(output_dir)
-        except URLError as ex:
-            print(link, ex.reason)
+        except Exception as ex:
+            print(link, str(ex))
 
     def dump_page(self, output_dir: str):
         title_start = re.search(r"<title>", self.driver.page_source[1:1500])
@@ -84,14 +84,17 @@ class Crawler:
         if not os.path.exists(current_page_path):
             os.makedirs(current_page_path)
         #save page source
-        page_source = \
-            self.dump_page_images(current_page_path + os.sep + self.config.subdir_images, self.driver.page_source)
-        page_source = \
-            self.dump_page_attachments(current_page_path + os.sep + self.config.subdir_attachments, page_source)
+        page_source = self.driver.page_source
+        if self.config.download_images:
+            page_source = \
+                self.dump_page_images(current_page_path + os.sep + self.config.subdir_images, self.driver.page_source)
+        if self.config.download_attachments:
+            page_source = \
+                self.dump_page_attachments(current_page_path + os.sep + self.config.subdir_attachments, page_source)
         page_source_recoded = page_source.encode('utf-8', 'strict')
         with open(current_page_path + os.sep + safe_file_name, 'w') as f:
             f.write(str(page_source_recoded))
-        print('Dumping page ', page_title.encode('utf-8', 'strict'))
+        print('Dumped page ', page_title.encode('utf-8', 'strict'))
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
         print('--Dumping attachments')
