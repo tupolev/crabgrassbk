@@ -93,8 +93,9 @@ class Crawler:
         # page_source_recoded = page_source.encode('utf-8', 'strict')
         with open(current_page_path + os.sep + safe_file_name, 'wb') as f:
             # f.write(str(page_source_recoded))
-            f.write(page_source)
-        print('Dumped page ', page_title.decode('utf-8', 'strict'))
+            f.write(bytearray(page_source.encode('utf-8')))
+        # print('Dumped page ', page_title.encode('utf-8'))
+        print('Dumped page ', page_title)
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
         print('--Dumping attachments')
