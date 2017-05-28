@@ -65,7 +65,7 @@ if __name__ == "__main__":
     driver.quit()
 
     # dump backup in a zip file
-    print("====Packing backup in ", backup_dir_for_now, backup_dir_for_now + os.extsep + 'zip', " ====")
+    print("====Packing backup in ", backup_dir_for_now + os.extsep + 'zip', " ====")
     Zip.zipdir(backup_dir_for_now, backup_dir_for_now + os.extsep + Zip.ZIP_EXTENSION)
     print("====Packed backup====")
 
