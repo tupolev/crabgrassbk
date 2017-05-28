@@ -17,14 +17,20 @@ def init_driver(config: Config):
 
 
 if __name__ == "__main__":
+    # init config object and driver
     config = Config('conf/config.yml')
     driver = init_driver(config)
     crawler = Crawler(driver, config)
+
+    print("====Driver logging in====")
     crawler.login()
     print("====Driver logged in====")
+
     print("====Starting backup process====")
+    # head driver to pages section
     crawler.goto_pages()
     time.sleep(2)
+
     # create folder for backups if it doesnt exist
     current_datetime = time.strftime('%d%m%Y%H%M%S')
     backup_dir_for_now = config.dir_backup + os.path.sep + current_datetime
@@ -33,9 +39,11 @@ if __name__ == "__main__":
     if not os.path.exists(backup_dir_for_now):
         os.makedirs(backup_dir_for_now)
 
+    # navigate through paginated results and retrieve all page links to fetch
     links_to_crawl = crawler.get_all_created_pages_links()
 
-    max_iterations = 5
+    # fetch pages
+    max_iterations = config.max_iterations_in_demo_mode
     counter = 0
     for link in links_to_crawl:
         if config.demo_mode and counter == max_iterations:
@@ -45,6 +53,11 @@ if __name__ == "__main__":
         counter += 1
     print("====Backup process finished====")
     time.sleep(1)
+
+    # logout driver
+    print("====Driver logging out====")
     crawler.logout()
     print("====Driver logged out====")
+
+    # close driver connection
     driver.quit()

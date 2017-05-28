@@ -1,5 +1,4 @@
 config:
-    demo_mode: false
     phantomjs:
         path: bin/phantomjs
     crabgrass:
@@ -17,3 +16,6 @@ config:
     downloadable_extensions: { doc, docx, xls, xlsx, ppt, pptx, pdf, txt, psd, odf, odt, ods, odp, md, rar, zip, gz, tar, tar.gz, xml, yml, avi, mov, wav, mp3, mp4, mpg, aac }
     download_images: true
     download_attachments: true
+    demo_mode:
+        enabled: false
+        max_iterations: 5

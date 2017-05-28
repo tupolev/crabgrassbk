@@ -90,11 +90,8 @@ class Crawler:
         if self.config.download_attachments:
             page_source = \
                 self.dump_page_attachments(current_page_path + os.sep + self.config.subdir_attachments, page_source)
-        # page_source_recoded = page_source.encode('utf-8', 'strict')
         with open(current_page_path + os.sep + safe_file_name, 'wb') as f:
-            # f.write(str(page_source_recoded))
             f.write(bytearray(page_source.encode('utf-8')))
-        # print('Dumped page ', page_title.encode('utf-8'))
         print('Dumped page ', page_title)
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
