@@ -30,3 +30,5 @@ Written by _tupolev_ for [_Oficina Precaria Berlín_](http://oficinaprecariaberl
 
 **Rise Up Crabgrass**: https://we.riseup.net
 
+### License
+Crabgrasbk is licensed under the [GNU General Public License v3.0](https://github.com/tupolev/crabgrassbk/blob/master/LICENSE)
