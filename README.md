@@ -17,7 +17,7 @@ It uses selenium webdriver (python dependency) and phantomJS (included).
 
 ### Setup
 - `git clone git@github.com:tupolev/crabgrassbk.git`
-- (We recomment using a virtualenv here)
+- (I recommend using a virtualenv here)
 - `pip install -r requirements.txt`
 
 ### Execution
