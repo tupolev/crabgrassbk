@@ -2,18 +2,20 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 import time
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from lib.crawler import Crawler
 from lib.config import Config
+from lib.zip import Zip
 
 
-def init_driver(config: Config):
-    driver = webdriver.PhantomJS(executable_path=config.phantomjs_bin_path)
-    driver.wait = WebDriverWait(driver, 1)
+def init_driver(config_instance: Config):
+    drv = webdriver.PhantomJS(executable_path=config_instance.phantomjs_bin_path)
+    drv.wait = WebDriverWait(drv, 1)
 
-    return driver
+    return drv
 
 
 if __name__ == "__main__":
@@ -61,3 +63,13 @@ if __name__ == "__main__":
 
     # close driver connection
     driver.quit()
+
+    # dump backup in a zip file
+    print("====Packing backup in ", backup_dir_for_now, backup_dir_for_now + os.extsep + 'zip', " ====")
+    Zip.zipdir(backup_dir_for_now, backup_dir_for_now + os.extsep + Zip.ZIP_EXTENSION)
+    print("====Packed backup====")
+
+    # delete backup folder and leave only zip file in backup root folder
+    print("====Deleting backup source folder ", backup_dir_for_now, " ====")
+    shutil.rmtree(backup_dir_for_now)
+    print("====Deleted backup source folder ", backup_dir_for_now, " ====")
