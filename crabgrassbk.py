@@ -1,3 +1,6 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import time
 from selenium import webdriver
@@ -31,8 +34,15 @@ if __name__ == "__main__":
         os.makedirs(backup_dir_for_now)
 
     links_to_crawl = crawler.get_all_created_pages_links()
+
+    max_iterations = 5
+    counter = 0
     for link in links_to_crawl:
+        if config.demo_mode and counter == max_iterations:
+            print("====DEMO MODE. Stopping at 5 links====")
+            break
         crawler.crawl_link(link, backup_dir_for_now)
+        counter += 1
     print("====Backup process finished====")
     time.sleep(1)
     crawler.logout()

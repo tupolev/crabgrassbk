@@ -1,10 +1,12 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import re
 import time
 import requests
 import pathlib
 from typing import Dict
-from urllib.error import URLError
 from slugify import slugify
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -88,10 +90,11 @@ class Crawler:
         if self.config.download_attachments:
             page_source = \
                 self.dump_page_attachments(current_page_path + os.sep + self.config.subdir_attachments, page_source)
-        page_source_recoded = page_source.encode('utf-8', 'strict')
-        with open(current_page_path + os.sep + safe_file_name, 'w') as f:
-            f.write(str(page_source_recoded))
-        print('Dumped page ', page_title.encode('utf-8', 'strict'))
+        # page_source_recoded = page_source.encode('utf-8', 'strict')
+        with open(current_page_path + os.sep + safe_file_name, 'wb') as f:
+            # f.write(str(page_source_recoded))
+            f.write(page_source)
+        print('Dumped page ', page_title.decode('utf-8', 'strict'))
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
         print('--Dumping attachments')

@@ -1,4 +1,5 @@
 config:
+    demo_mode: false
     phantomjs:
         path: bin/phantomjs
     crabgrass:
