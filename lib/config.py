@@ -1,3 +1,6 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+
 from yaml import load
 
 
@@ -18,3 +21,5 @@ class Config:
         self.downloadable_extensions = init_config['config']['downloadable_extensions']
         self.download_images = init_config['config']['download_images']
         self.download_attachments = init_config['config']['download_attachments']
+        self.demo_mode = init_config['config']['demo_mode']['enabled']
+        self.max_iterations_in_demo_mode = init_config['config']['demo_mode']['max_iterations']
