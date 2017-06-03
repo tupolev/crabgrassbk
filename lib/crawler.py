@@ -92,7 +92,6 @@ class Crawler:
                 self.dump_page_attachments(current_page_path + os.sep + self.config.subdir_attachments, page_source)
         with open(current_page_path + os.sep + safe_file_name, 'wb') as f:
             f.write(bytearray(page_source.encode('utf-8')))
-        print('Dumped page ', page_title)
 
     def dump_page_attachments(self, output_dir: str, page_source: str) -> str:
         print('--Dumping attachments')
@@ -104,12 +103,14 @@ class Crawler:
         # find a tags in source
         a_nodes = self.driver.find_elements_by_xpath("//a")
         # download and store attachments in folder attachments
+        num_attachments = len(a_nodes)
+        counter = 1
         for a_node in a_nodes:
             href = str(a_node.get_attribute('href'))
             attachment_file_name = os.path.basename(href)
             if self.is_downloadable_resource(href) \
                     and not os.path.exists(output_dir + os.sep + attachment_file_name):
-                print('Dumping attachment ', attachment_file_name)
+                print('Dumping attachment ', str(counter), ' of ', str(num_attachments))
                 try:
                     response = requests.get(href, cookies=self.cookies)
                     output = open(output_dir + os.sep + attachment_file_name, "wb")
@@ -118,11 +119,11 @@ class Crawler:
 
                     # replace attachment link paths with stored path within page source
                     href = href.replace(self.config.url, '')
-                    print(href, ' -> ', attachments_folder + os.sep + attachment_file_name)
                     processed_page_source =\
                         processed_page_source.replace(href, attachments_folder + os.sep + attachment_file_name)
                 except Exception as ex:
                     print("SKIPPED :", href, " because of ", str(ex))
+            counter += 1
 
         return processed_page_source
 
@@ -135,12 +136,14 @@ class Crawler:
         # find images in source
         image_nodes = self.driver.find_elements_by_xpath("//img")
         # download and store images in folder img
+        num_images = len(image_nodes)
+        counter = 1
         for image in image_nodes:
             src = str(image.get_attribute('src'))
             image_file_name = os.path.basename(src)
             if not os.path.exists(output_dir + os.sep + image_file_name):
                 try:
-                    print('Dumping image ', image_file_name)
+                    print('Dumping image ', str(counter), ' of ', str(num_images))
                     response = requests.get(src, cookies=self.cookies)
                     output = open(output_dir + os.sep + image_file_name, "wb")
                     output.write(response.content)
@@ -148,10 +151,10 @@ class Crawler:
 
                     # replace image paths with stored path within page source
                     src = src.replace(self.config.url, '')
-                    print(src, ' -> ', 'images' + os.sep + image_file_name)
                     processed_page_source = processed_page_source.replace(src, 'images' + os.sep + image_file_name)
                 except Exception as ex:
                     print("SKIPPED :", src, " because of ", str(ex))
+            counter += 1
 
         return processed_page_source
 

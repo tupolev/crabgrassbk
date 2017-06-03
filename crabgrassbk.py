@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     # navigate through paginated results and retrieve all page links to fetch
     links_to_crawl = crawler.get_all_created_pages_links()
-
+    total_links = len(links_to_crawl)
     # fetch pages
     max_iterations = config.max_iterations_in_demo_mode
     counter = 0
@@ -52,6 +52,7 @@ if __name__ == "__main__":
             print("====DEMO MODE. Stopping at 5 links====")
             break
         crawler.crawl_link(link, backup_dir_for_now)
+        print("Processed link ", str(counter), " of ", str(total_links))
         counter += 1
     print("====Backup process finished====")
     time.sleep(1)
